@@ -35,9 +35,17 @@ public class Main {
                 {0, 6, 0, 4, 0, 0, 0, 0, 0},
                 {9, 1, 0, 0, 6, 0, 0, 0, 2}
         };
+        long startTime = System.currentTimeMillis();
 
-        Solver solver = new Solver(board3);
-        System.out.println(solver.getSolution());
+        {
+            Solver solver = new Solver(board1);
+            System.out.println(solver.getSolution());
+        }
+
+        //время затраченное на выполнение кода
+        long time = System.currentTimeMillis() - startTime;
+        System.out.println(time);
+
     }
 
 }

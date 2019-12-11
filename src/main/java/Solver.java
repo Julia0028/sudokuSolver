@@ -221,7 +221,6 @@ public class Solver {
                 }
             }
         }
-        System.out.println(toStrCand(candidates));
         return candidates;
     }
 
@@ -264,15 +263,30 @@ public class Solver {
     private Cell[][] algoLoop(Cell[][] sudoku) {
         Candidate[][] matrix;
         Cell[][] oldSudoku;
+        int idx = 0;
         while (!complete(sudoku)) {
-            matrix = formCandidateMatrix(sudoku);
             oldSudoku = copyCell(sudoku);
+            idx++;
+            matrix = formCandidateMatrix(sudoku);
+            sudoku = insertHeroes(sudoku, matrix);
+            updateFields(sudoku);
+
+            matrix = formCandidateMatrix(sudoku);
             matrix = findRowHeroes(matrix);
-            //System.out.println(toStrCand(matrix));
+            sudoku = insertHeroes(sudoku, matrix);
+            updateFields(sudoku);
+
+            matrix = formCandidateMatrix(sudoku);
             matrix = findColumnHeroes(matrix);
-            //System.out.println(toStrCand(matrix));
+            sudoku = insertHeroes(sudoku, matrix);
+            updateFields(sudoku);
+
+            matrix = formCandidateMatrix(sudoku);
             matrix = findBlockHeroes(matrix);
             sudoku = insertHeroes(sudoku, matrix);
+            updateFields(sudoku);
+
+
            // System.out.println(toStr(sudoku));
             if (equalsSudoku(oldSudoku, sudoku)) {
                 sudoku = insertForsedHeroes(sudoku, matrix);
@@ -304,6 +318,14 @@ public class Solver {
             }
         }
         return s;
+    }
+
+    private void updateFields(Cell[][] cells) {
+        for (int i = 0; i < 9; i++) {
+            this.rows[i] = new Row(cells, i);
+            this.columns[i] = new Column(cells, i);
+            this.blocks[i] = new Block(cells, i);
+        }
     }
 
 
