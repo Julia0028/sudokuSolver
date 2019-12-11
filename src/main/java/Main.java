@@ -25,8 +25,7 @@ public class Main {
             };
 
             Solver solver = new Solver(board2);
-            solver.getSolution();
-            System.out.println(solver.toString());
+            System.out.println(solver.getSolution());
 
         }
 }

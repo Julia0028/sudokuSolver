@@ -187,9 +187,10 @@ public class Solver {
     }
 
     private Cell[][] algoLoop(Cell[][] sudoku) {
-        Candidate[][] matrix = formCandidateMatrix(sudoku);
+        Candidate[][] matrix;
         Cell[][] oldSudoku;
         while (!complete(sudoku)) {
+            matrix = formCandidateMatrix(sudoku);
             oldSudoku = copyCell(sudoku);
             sudoku = insertHeroes(sudoku, matrix);
             if (equalsSudoku(oldSudoku, sudoku)) {
@@ -216,7 +217,7 @@ public class Solver {
         String s = "";
         for (int i =0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                s += res[i][j].getValue();
+                s = s + res[i][j].getValue() + " ";
                 if (j == 8) s += "\n";
             }
         }
@@ -230,7 +231,8 @@ public class Solver {
         Candidate res[][] = new Candidate[9][9];
         for (int i = 0; i < copy.length; i++) {
             for (int j = 0; j < copy.length; j++) {
-                res[i][j] = copy[i][j];
+                ArrayList<Integer> cand = copy[i][j].getCandidates();
+                res[i][j] = new Candidate(cand);
             }
         }
         return res;
@@ -240,7 +242,11 @@ public class Solver {
         Cell res[][] = new Cell[9][9];
         for (int i = 0; i < copy.length; i++) {
             for (int j = 0; j < copy.length; j++) {
-                res[i][j] = copy[i][j];
+                int row = copy[i][j].getNumbRow();
+                int coloumn = copy[i][j].getNumbColumn();
+                int bl = copy[i][j].getNumbBlock();
+                int value = copy[i][j].getValue();
+                res[i][j] = new Cell(row, coloumn, bl, value);
             }
         }
         return res;
