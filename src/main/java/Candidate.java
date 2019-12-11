@@ -12,5 +12,11 @@ public class Candidate {
         return candidates;
     }
 
+    public void removeAllCandidates() {
+        for (int i = 0; i < candidates.size() + 1; i ++) {
+            candidates.remove(i);
+        }
+    }
+
 
 }

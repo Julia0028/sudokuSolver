@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Solver {
 
@@ -41,6 +39,44 @@ public class Solver {
             this.blocks[i] = new Block(this.sudoku, i);
         }
     }
+
+    private List<Integer> isCout(ArrayList<Integer> list) {
+        List<Integer> res = new ArrayList<Integer>();
+        int[] mas = new int[10];
+        for (int i = 0; i < list.size(); i++) {
+            int ind = list.get(i);
+            switch(ind){
+                case 0: mas[ind]++;
+                break;
+                case 1: mas[ind]++;
+                break;
+                case 2: mas[ind]++;
+                break;
+                case 3: mas[ind]++;
+                break;
+                case 4: mas[ind]++;
+                break;
+                case 5: mas[ind]++;
+                break;
+                case 6: mas[ind]++;
+                break;
+                case 7: mas[ind]++;
+                break;
+                case 8: mas[ind]++;
+                break;
+                case 9: mas[ind]++;
+                break;
+            }
+        }
+        for (int i = 0; i < mas.length; i++) {
+            if (mas[i] == 1) {
+                res.add(i);
+            }
+        }
+        return res;
+    }
+
+
 
     private ArrayList<Integer> decrRow(List<Integer> cand, int i) {
         ArrayList<Integer> candidates = new ArrayList<Integer>(cand);
@@ -96,10 +132,22 @@ public class Solver {
         Candidate[][] candidates = copyArray(cand);
         for (int i = 0; i < 9; i ++) {
             Cell[] cells = rows[i].getUnit();
+            ArrayList<Integer> allCandidates = new ArrayList<Integer>();
             for (Cell cell: cells) {
-                if (candidates[cell.getNumbRow()][cell.getNumbColumn()].getCandidates().size() == 1)
-                    cell.setValue(candidates[cell.getNumbRow()][cell.getNumbColumn()].getCandidates().get(0));
+                int column = cell.getNumbColumn();
+                allCandidates.addAll(candidates[i][column].getCandidates());
+            }
 
+            List<Integer> values = isCout(allCandidates);
+            for (int val: values) {
+                for (Cell cell : cells) {
+                    int column = cell.getNumbColumn();
+                    if (candidates[i][column].getCandidates().contains(val)) {
+                        candidates[i][column].getCandidates().clear();
+                        candidates[i][column].getCandidates().add(val);
+                        break;
+                    }
+                }
             }
         }
         return candidates;
@@ -109,10 +157,21 @@ public class Solver {
         Candidate[][] candidates = copyArray(cand);
         for (int i = 0; i < 9; i ++) {
             Cell[] cells = columns[i].getUnit();
+            ArrayList<Integer> allCandidates = new ArrayList<Integer>();
             for (Cell cell: cells) {
-                if (candidates[cell.getNumbRow()][cell.getNumbColumn()].getCandidates().size() == 1)
-                    cell.setValue(candidates[cell.getNumbRow()][cell.getNumbColumn()].getCandidates().get(0));
-
+                int row = cell.getNumbRow();
+                allCandidates.addAll(candidates[row][i].getCandidates());
+            }
+            List<Integer> values = isCout(allCandidates);
+            for (int val: values) {
+                for (Cell cell : cells) {
+                    int row = cell.getNumbRow();
+                    if (candidates[row][i].getCandidates().contains(val)) {
+                        candidates[row][i].getCandidates().clear();
+                        candidates[row][i].getCandidates().add(val);
+                        break;
+                    }
+                }
             }
         }
         return candidates;
@@ -122,10 +181,23 @@ public class Solver {
         Candidate[][] candidates = copyArray(cand);
         for (int i = 0; i < 9; i ++) {
             Cell[] cells = blocks[i].getUnit();
+            ArrayList<Integer> allCandidates = new ArrayList<Integer>();
             for (Cell cell: cells) {
-                if (candidates[cell.getNumbRow()][cell.getNumbColumn()].getCandidates().size() == 1)
-                    cell.setValue(candidates[cell.getNumbRow()][cell.getNumbColumn()].getCandidates().get(0));
-
+                int row = cell.getNumbRow();
+                int column = cell.getNumbColumn();
+                allCandidates.addAll(candidates[row][column].getCandidates());
+            }
+            List<Integer> values = isCout(allCandidates);
+            for (int val: values) {
+                for (Cell cell : cells) {
+                    int column = cell.getNumbColumn();
+                    int row = cell.getNumbRow();
+                    if (candidates[row][column].getCandidates().contains(val)) {
+                        candidates[row][column].getCandidates().clear();
+                        candidates[row][column].getCandidates().add(val);
+                        break;
+                    }
+                }
             }
         }
         return candidates;
@@ -149,6 +221,7 @@ public class Solver {
                 }
             }
         }
+        System.out.println(toStrCand(candidates));
         return candidates;
     }
 
@@ -168,8 +241,10 @@ public class Solver {
         Cell[][] cells1 = copyCell(cells);
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                if (candidate[i][j].getCandidates().size() > 1)
+                if (candidate[i][j].getCandidates().size() > 1) {
                     cells1[i][j].setValue(candidate[i][j].getCandidates().get(0));
+                    return cells1;
+                }
             }
         }
         return cells1;
@@ -192,9 +267,16 @@ public class Solver {
         while (!complete(sudoku)) {
             matrix = formCandidateMatrix(sudoku);
             oldSudoku = copyCell(sudoku);
+            matrix = findRowHeroes(matrix);
+            //System.out.println(toStrCand(matrix));
+            matrix = findColumnHeroes(matrix);
+            //System.out.println(toStrCand(matrix));
+            matrix = findBlockHeroes(matrix);
             sudoku = insertHeroes(sudoku, matrix);
+           // System.out.println(toStr(sudoku));
             if (equalsSudoku(oldSudoku, sudoku)) {
                 sudoku = insertForsedHeroes(sudoku, matrix);
+                //System.out.println(toStr(sudoku));
             }
         }
 
@@ -253,13 +335,24 @@ public class Solver {
     }
 
 
-    @Override
-    public String toString() {
+    public String toStr(Cell[][] sudoku) {
         String s = "";
         for (int i = 0; i < sudoku.length; i++) {
             for (int j = 0; j < sudoku.length; j++) {
                 s = s + sudoku[i][j].getValue() + " ";
                 if (j == 8) s += "\n";
+            }
+        }
+        return s;
+    }
+
+    public String toStrCand(Candidate[][] cand) {
+        String s = "";
+        for (int i = 0; i < cand.length; i++) {
+            for (int j = 0; j < cand.length; j++) {
+                s = s + cand[i][j].getCandidates() + "   ";
+                if (j == 8) s += "\n\n";
+
             }
         }
         return s;
