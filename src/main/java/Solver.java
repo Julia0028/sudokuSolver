@@ -1,16 +1,18 @@
 import java.util.*;
 
-public class Solver {
+public class Solver extends Sudoku {
 
-    private Cell[][] sudoku = new Cell[9][9];
+   // private Cell[][] sudoku = new Cell[9][9];
     private Row[] rows = new Row[9];
     private Column[] columns = new Column[9];
     private Block[] blocks = new Block[9];
-    private int openedVal = 0;
 
 
-    Solver(int[][] board) {
-        int numbBlock = 0;
+
+    private Solver() {
+
+
+      /*  int numbBlock = 0;
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board.length; j++) {
                 if (i < 3) {
@@ -29,15 +31,29 @@ public class Solver {
                     else if (j > 5 ) numbBlock = 8;
                 }
                 this.sudoku[i][j] = new Cell(i, j, numbBlock, board[i][j]);
-                if (sudoku[i][j].getValue() != 0) openedVal++;
 
             }
-        }
+        } */
         for (int i = 0; i < 9; i++){
             this.rows[i] = new Row(this.sudoku, i);
             this.columns[i] = new Column(this.sudoku, i);
             this.blocks[i] = new Block(this.sudoku, i);
         }
+    }
+
+    public Solver(Sudoku other) {
+        for (int i =0; i < 9; i++) {
+            for (int j =0; j < 9; j++) {
+                this.sudoku[i][j] = other.getSudoku()[i][j];
+            }
+        }
+
+        for (int i = 0; i < 9; i++){
+            this.rows[i] = new Row(this.sudoku, i);
+            this.columns[i] = new Column(this.sudoku, i);
+            this.blocks[i] = new Block(this.sudoku, i);
+        }
+
     }
 
     private List<Integer> isCout(ArrayList<Integer> list) {
@@ -78,7 +94,7 @@ public class Solver {
 
 
 
-    private ArrayList<Integer> decrRow(List<Integer> cand, int i) {
+  /* private ArrayList<Integer> decrRow(List<Integer> cand, int i) {
         ArrayList<Integer> candidates = new ArrayList<Integer>(cand);
         for (int value = 1; value < 10; value++) {
             Cell[] rowMas = rows[i].getUnit();
@@ -123,12 +139,28 @@ public class Solver {
             }
         }
         return candidates;
+    } */
+
+    private ArrayList<Integer> decrUnit(List<Integer> cand, int i, Logic[] logic) {
+        ArrayList<Integer> candidates = new ArrayList<Integer>(cand);
+        for (int value = 1; value < 10; value++) {
+            Cell[] mas = logic[i].getUnit();
+            for (int k =0; k < 9; k++) {
+                if (mas[k].getValue() == value) {
+                    for (int a = 0; a < candidates.size(); a++) {
+                        if (candidates.get(a) == value) candidates.remove(a);
+                    }
+
+                }
+            }
+        }
+        return candidates;
     }
 
 
 
 
-    private Candidate[][] findRowHeroes(Candidate[][] cand) {
+   /* private Candidate[][] findRowHeroes(Candidate[][] cand) {
         Candidate[][] candidates = copyArray(cand);
         for (int i = 0; i < 9; i ++) {
             Cell[] cells = rows[i].getUnit();
@@ -201,6 +233,32 @@ public class Solver {
             }
         }
         return candidates;
+    } */
+
+    private Candidate[][] findUnitHeroes(Candidate[][] cand, Logic[] logic) {
+        Candidate[][] candidates = copyArray(cand);
+        for (int i = 0; i < 9; i ++) {
+            Cell[] cells = logic[i].getUnit();
+            ArrayList<Integer> allCandidates = new ArrayList<Integer>();
+            for (Cell cell: cells) {
+                int row = cell.getNumbRow();
+                int column = cell.getNumbColumn();
+                allCandidates.addAll(candidates[row][column].getCandidates());
+            }
+            List<Integer> values = isCout(allCandidates);
+            for (int val: values) {
+                for (Cell cell : cells) {
+                    int column = cell.getNumbColumn();
+                    int row = cell.getNumbRow();
+                    if (candidates[row][column].getCandidates().contains(val)) {
+                        candidates[row][column].getCandidates().clear();
+                        candidates[row][column].getCandidates().add(val);
+                        break;
+                    }
+                }
+            }
+        }
+        return candidates;
     }
 
     private Candidate[][] formCandidateMatrix (Cell[][] cells) {
@@ -213,9 +271,40 @@ public class Solver {
                 if (cells[row][col].isSetValue()) candidates[row][col] = new Candidate(new ArrayList<Integer>());
                 else {
                     List<Integer> cand = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
-                    cand = decrRow(cand, i);
-                    cand = decrColumn(cand, j);
-                    cand = decrBlock(cand, block);
+                    cand = decrUnit(cand, row, rows);
+                    cand = decrUnit(cand, col, columns);
+                    cand = decrUnit(cand, block, blocks);
+                  //  cand = decrRow(cand, row);
+                  //  cand = decrColumn(cand, col);
+                  //  cand = decrBlock(cand, block);
+                    candidates[i][j] = new Candidate(cand);
+
+                }
+            }
+        }
+        return candidates;
+    }
+
+    private Candidate[][] formCandidateMatrixRandom (Cell[][] cells, List<Integer> list) {
+        Candidate[][] candidates = new Candidate[9][9];
+        for (int val = 0; val < 10; val++) list.add(val);
+
+
+
+        for (int i = 0; i < cells.length; i++) {
+            for (int j = 0; j < cells.length; j++) {
+                int row = cells[i][j].getNumbRow();
+                int col = cells[i][j].getNumbColumn();
+                int block = cells[i][j].getNumbBlock();
+                if (cells[row][col].isSetValue()) candidates[row][col] = new Candidate(new ArrayList<Integer>());
+                else {
+                    List<Integer> cand = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
+                    cand = decrUnit(cand, row, rows);
+                    cand = decrUnit(cand, col, columns);
+                    cand = decrUnit(cand, block, blocks);
+                    //  cand = decrRow(cand, row);
+                    //  cand = decrColumn(cand, col);
+                    //  cand = decrBlock(cand, block);
                     candidates[i][j] = new Candidate(cand);
 
                 }
@@ -261,36 +350,80 @@ public class Solver {
     }
 
     private Cell[][] algoLoop(Cell[][] sudoku) {
+
         Candidate[][] matrix;
         Cell[][] oldSudoku;
+
         int idx = 0;
         while (!complete(sudoku)) {
             oldSudoku = copyCell(sudoku);
             idx++;
+
+            System.out.println("------" + idx + "------");
+            System.out.println(toStr(sudoku));
+
             matrix = formCandidateMatrix(sudoku);
+
+            System.out.println("---— Candidates —----");
+            System.out.println(toStrCand(matrix));
+
             sudoku = insertHeroes(sudoku, matrix);
             updateFields(sudoku);
 
+            System.out.println("----— New board —----");
+            System.out.println(toStr(sudoku));
+
             matrix = formCandidateMatrix(sudoku);
-            matrix = findRowHeroes(matrix);
+            //matrix = findRowHeroes(matrix);
+            System.out.println("---— Candidates —----");
+            System.out.println(toStrCand(matrix));
+
+            matrix = findUnitHeroes(matrix, rows);
+
+            System.out.println("---— Row heroes —----");
+            System.out.println(toStrCand(matrix));
+
             sudoku = insertHeroes(sudoku, matrix);
             updateFields(sudoku);
 
+            System.out.println("----— New board —----");
+            System.out.println(toStr(sudoku));
+
             matrix = formCandidateMatrix(sudoku);
-            matrix = findColumnHeroes(matrix);
+            //matrix = findColumnHeroes(matrix);
+            System.out.println("---— Candidates —----");
+            System.out.println(toStrCand(matrix));
+
+            matrix = findUnitHeroes(matrix, columns);
+
+            System.out.println("---— Column heroes —----");
+            System.out.println(toStrCand(matrix));
+
             sudoku = insertHeroes(sudoku, matrix);
             updateFields(sudoku);
 
+            System.out.println("----— New board —----");
+            System.out.println(toStr(sudoku));
+
             matrix = formCandidateMatrix(sudoku);
-            matrix = findBlockHeroes(matrix);
+            //matrix = findBlockHeroes(matrix);
+            System.out.println("---— Candidates —----");
+            System.out.println(toStrCand(matrix));
+
+            matrix = findUnitHeroes(matrix, blocks);
+
+            System.out.println("---— Block heroes —----");
+            System.out.println(toStrCand(matrix));
+
             sudoku = insertHeroes(sudoku, matrix);
             updateFields(sudoku);
 
+            System.out.println("----— New board —----");
+            System.out.println(toStr(sudoku));
 
-           // System.out.println(toStr(sudoku));
+
             if (equalsSudoku(oldSudoku, sudoku)) {
                 sudoku = insertForsedHeroes(sudoku, matrix);
-                //System.out.println(toStr(sudoku));
             }
         }
 
@@ -307,17 +440,9 @@ public class Solver {
         return true;
     }
 
-    public String getSolution() {
-        Cell[][] res = algoLoop(sudoku);
-
-        String s = "";
-        for (int i =0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                s = s + res[i][j].getValue() + " ";
-                if (j == 8) s += "\n";
-            }
-        }
-        return s;
+    public Cell[][] solve() {
+        Cell[][] res = algoLoop(this.sudoku);
+        return res;
     }
 
     private void updateFields(Cell[][] cells) {
