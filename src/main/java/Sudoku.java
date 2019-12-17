@@ -57,7 +57,6 @@ public class Sudoku {
         for (int i = 0; i < board.length; i++) {
             sumRow++;
             for (int j = 0; j < board[0].length; j++) {
-                int a = board[0].length;
                 sumColumn++;
                if (j == board[0].length - 1 && sumColumn != 9) throw new
                        IllegalArgumentException("A column must have 9 cells");
