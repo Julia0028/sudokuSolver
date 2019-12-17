@@ -7,10 +7,6 @@ public class Cell {
     private int numbColumn;
     private int numbBlock;
     private int value;
-    private ArrayList<Integer> possibleValues;
-    private ArrayList<Integer> uniqueValues;
-
-    private ArrayList<Integer> candidates;
 
 
 
@@ -19,10 +15,6 @@ public class Cell {
         this.numbColumn = j;
         this.numbBlock = numbBlock;
         this.value = value;
-
-
-
-
 
     }
 

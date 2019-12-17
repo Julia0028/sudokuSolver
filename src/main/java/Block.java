@@ -4,8 +4,8 @@ import java.util.List;
 public class Block extends Logic{
 
     Block(Cell[][] cell, int val) {
-        for(int i = 0; i < 9; i++) {
-            unit[i] = cell[i / 3 + 3 * (val / 3)][3 * val % 9 + i % 3];
+        for(int i = 0; i < boardSize; i++) {
+            unit[i] = cell[i / blockWidth + blockWidth * (val / blockWidth)][blockWidth * val % 9 + i % blockWidth];
         }
     }
 

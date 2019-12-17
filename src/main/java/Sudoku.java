@@ -1,17 +1,26 @@
+import java.util.HashSet;
+
 public class Sudoku {
 
-    protected Cell[][] sudoku;
+    Cell[][] sudoku;
+    static int blockWidth = 3;
+    static int boardSize = 9;
 
-    public Sudoku() {
+    Sudoku() {
         sudoku = new Cell[9][9];
     }
 
 
-    public Sudoku(int[][] board) {
+    Sudoku(int[][] board) {
         this();
         int numbBlock = 0;
+
+        boardValidation(board);
+
         for (int i = 0; i < board.length; i++) {
+
             for (int j = 0; j < board.length; j++) {
+
                 if (i < 3) {
                     if (j < 3) numbBlock = 0;
                     if (j > 2 && j < 6) numbBlock = 1;
@@ -35,27 +44,38 @@ public class Sudoku {
 
     public Sudoku(Sudoku other) {
         this();
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
                 this.sudoku[i][j] = other.getSudoku()[i][j];
             }
         }
     }
 
-    public String getSolution() {
-        Solver solver = new Solver(this);
-        Cell[][] res = solver.solve();
-        String s = "";
-        for (int i =0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                s = s + res[i][j].getValue() + " ";
-                if (j == 8) s += "\n";
+    private void boardValidation(int[][] board) {
+        int sumRow = 0;
+        int sumColumn = 0;
+        for (int i = 0; i < board.length; i++) {
+            sumRow++;
+            for (int j = 0; j < board[0].length; j++) {
+                int a = board[0].length;
+                sumColumn++;
+               if (j == board[0].length - 1 && sumColumn != 9) throw new
+                       IllegalArgumentException("A column must have 9 cells");
             }
+            sumColumn = 0;
+            if (i == board.length - 1 && sumRow != 9) throw new
+                    IllegalArgumentException("A row must have 9 cells");
         }
-        return s;
     }
 
-    public Cell[][] getSudoku() {
+
+
+    String getSolution() {
+        Solver solver = new Solver(this);
+        return solver.solve();
+    }
+
+    Cell[][] getSudoku() {
         return sudoku;
     }
 }

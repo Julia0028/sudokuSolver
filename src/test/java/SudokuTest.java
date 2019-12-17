@@ -1,17 +1,39 @@
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
 import static org.junit.Assert.*;
 
 public class SudokuTest {
 
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
     @Test
     public void solv1() {
-        Sudoku sudoku1 = new Sudoku(board1);
-        assertEquals(sudoku1.getSolution(), board1Answer);
+        Sudoku sudoku = new Sudoku(board1);
+        assertEquals(sudoku.getSolution(), board1Answer);
     }
     @Test
     public void solv2() {
-        Sudoku sudoku2 = new Sudoku(board2);
-        assertEquals(sudoku2.getSolution(), board2Answer);
+        Sudoku sudoku = new Sudoku(board2);
+        assertEquals(sudoku.getSolution(), board2Answer);
+    }
+
+    @Test
+    public void createError() {
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage("A row must have 9 cells");
+        Sudoku sudoku = new Sudoku(boardError1);
+
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage("A column must have 9 cells");
+        Sudoku sudoku1 = new Sudoku(boardError2);
+
+        Sudoku sudoku3 = new Sudoku(boardError3);
+        assertEquals(sudoku3.getSolution(), "failed to get sudoku solution");
+
+
     }
 
     private int[][] board1 = {
@@ -37,6 +59,40 @@ public class SudokuTest {
             {9, 1, 0, 0, 0, 0, 5, 2, 0},
             {0, 0, 0, 0, 4, 0, 0, 9, 6}
     };
+
+    private int[][] boardError1 = {
+            {0, 0, 0, 0, 0, 3, 0, 0, 0},
+            {0, 0, 8, 1, 9, 0, 3, 6, 7},
+            {0, 6, 9, 0, 0, 2, 0, 0, 1},
+            {6, 7, 0, 0, 0, 0, 4, 8, 0}
+    };
+
+    private int[][] boardError2 = {
+            {0, 0, 0, 0, 0, 3, 0, 0, 0, 6},
+            {0, 0, 8, 1, 9, 0, 3, 6, 7},
+            {0, 6, 9, 0, 0, 2, 0, 0, 1},
+            {6, 7, 0, 0, 0, 0, 4, 8, 0},
+            {0, 3, 5, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 3, 8, 0, 2, 0, 0},
+            {0, 4, 0, 0, 5, 1, 0, 0, 0},
+            {9, 1, 0, 0, 0, 0, 5, 2, 0},
+            {0, 0, 0, 0, 4, 0, 0, 9}
+    };
+
+    private int[][] boardError3 = {
+            {0, 0, 0, 0, 0, 3, 3, 0, 0, 6},
+            {0, 0, 8, 1, 9, 0, 3, 6, 7},
+            {0, 6, 9, 0, 0, 2, 0, 0, 1},
+            {6, 7, 0, 0, 0, 0, 4, 8, 0},
+            {0, 3, 5, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 3, 8, 0, 2, 0, 0},
+            {0, 4, 0, 0, 5, 1, 0, 0, 0},
+            {9, 1, 0, 0, 0, 0, 5, 2, 0},
+            {0, 0, 0, 0, 4, 0, 0, 9}
+    };
+
+
+
 
     private String board1Answer =
             "5 3 4 6 7 8 9 1 2 \n" +
