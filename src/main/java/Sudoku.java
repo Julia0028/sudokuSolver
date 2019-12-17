@@ -7,7 +7,7 @@ public class Sudoku {
     static int boardSize = 9;
 
     Sudoku() {
-        sudoku = new Cell[9][9];
+        sudoku = new Cell[boardSize][boardSize];
     }
 
 

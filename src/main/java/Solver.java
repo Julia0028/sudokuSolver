@@ -3,10 +3,10 @@ import java.util.*;
 class Solver extends Sudoku {
 
 
-    private Row[] rows = new Row[9];
-    private Column[] columns = new Column[9];
-    private Block[] blocks = new Block[9];
-    private Candidate[][] candidates = new Candidate[9][9];
+    private Row[] rows = new Row[boardSize];
+    private Column[] columns = new Column[boardSize];
+    private Block[] blocks = new Block[boardSize];
+    private Candidate[][] candidates = new Candidate[boardSize][boardSize];
 
 
     Solver(Sudoku other) {
