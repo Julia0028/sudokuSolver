@@ -21,6 +21,12 @@ public class SudokuTest {
     }
 
     @Test
+    public void unsolv() {
+        Sudoku sudoku = new Sudoku(boardError3);
+        assertEquals(sudoku.getSolution(), "failed to get sudoku solution");
+    }
+
+    @Test
     public void createError() {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage("A row must have 9 cells");
@@ -29,11 +35,6 @@ public class SudokuTest {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage("A column must have 9 cells");
         Sudoku sudoku1 = new Sudoku(boardError2);
-
-        Sudoku sudoku3 = new Sudoku(boardError3);
-        assertEquals(sudoku3.getSolution(), "failed to get sudoku solution");
-
-
     }
 
     private int[][] board1 = {
@@ -60,6 +61,8 @@ public class SudokuTest {
             {0, 0, 0, 0, 4, 0, 0, 9, 6}
     };
 
+
+
     private int[][] boardError1 = {
             {0, 0, 0, 0, 0, 3, 0, 0, 0},
             {0, 0, 8, 1, 9, 0, 3, 6, 7},
@@ -80,15 +83,15 @@ public class SudokuTest {
     };
 
     private int[][] boardError3 = {
-            {0, 0, 0, 0, 0, 3, 3, 0, 0, 6},
-            {0, 0, 8, 1, 9, 0, 3, 6, 7},
-            {0, 6, 9, 0, 0, 2, 0, 0, 1},
-            {6, 7, 0, 0, 0, 0, 4, 8, 0},
-            {0, 3, 5, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 3, 8, 0, 2, 0, 0},
-            {0, 4, 0, 0, 5, 1, 0, 0, 0},
-            {9, 1, 0, 0, 0, 0, 5, 2, 0},
-            {0, 0, 0, 0, 4, 0, 0, 9}
+            {8, 0, 8, 0, 0, 0, 0, 0, 0},
+            {0, 0, 3, 6, 0, 0, 0, 0, 0},
+            {0, 7, 0, 0, 9, 0, 2, 0, 0},
+            {0, 5, 0, 0, 0, 7, 0, 0, 0},
+            {0, 0, 0, 0, 4, 5, 7, 0, 0},
+            {0, 0, 0, 1, 0, 0, 0, 3, 0},
+            {0, 0, 1, 0, 0, 0, 0, 6, 8},
+            {0, 0, 8, 5, 0, 0, 0, 1, 0},
+            {0, 9, 0, 0, 0, 0, 4, 0, 0}
     };
 
 

@@ -3,8 +3,8 @@ import java.util.HashSet;
 public class Sudoku {
 
     Cell[][] sudoku;
-    static int blockWidth = 3;
-    static int boardSize = 9;
+    final static int blockWidth = 3;
+    final static int boardSize = 9;
 
     Sudoku() {
         sudoku = new Cell[boardSize][boardSize];

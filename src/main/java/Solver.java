@@ -93,8 +93,15 @@ class Solver extends Sudoku {
 
 
             if (equalsSudoku(oldSudoku, sudoku)) {
-                sudoku = insertForsedHeroes(sudoku);
+                sudoku = insertForcedHeroes(sudoku);
                 updateFields(sudoku);
+
+                System.out.println("----— New board —----");System.out.println(sudokuToString());
+
+                candidates = formCandidateMatrix();
+
+                System.out.println("---— Candidates —----");
+                System.out.println(candidatesToString());
             }
         }
 
@@ -184,11 +191,11 @@ class Solver extends Sudoku {
         return cells1;
     }
 
-    private Cell[][] insertForsedHeroes(Cell[][] cells) {
+    private Cell[][] insertForcedHeroes(Cell[][] cells) {
         Cell[][] cells1 = copyCell(cells);
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
-                if (candidates[i][j].getCandidates().size() > 1) {
+                if (candidates[i][j].getCountOfCandidates() > 1) {
                     cells1[i][j].setValue(candidates[i][j].getCandidates().get(0));
                     return cells1;
                 }
