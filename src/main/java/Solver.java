@@ -109,7 +109,7 @@ class Solver extends Sudoku {
     }
 
 
-    private void openTrip(Logic logic, int size) {
+    private void nakedVal(Logic logic, int size) {
         Cell[] cells = logic.getUnit();
         ArrayList<Cell> cellsToCompare = new ArrayList<Cell>();
         ArrayList<Cell> otherCells = new ArrayList<Cell>();
@@ -238,16 +238,15 @@ class Solver extends Sudoku {
 
 
        for (int i = 0; i < boardSize; i++) {
-           //openCouples(rows[i]);
-           openTrip(rows[i], 4);
-           openTrip(rows[i], 3);
-           openTrip(rows[i], 2);
-           openTrip(columns[i], 4);
-           openTrip(columns[i], 3);
-           openTrip(columns[i], 2);
-           openTrip(blocks[i], 4);
-           openTrip(blocks[i], 3);
-           openTrip(blocks[i], 2);
+           nakedVal(rows[i], 4);
+           nakedVal(rows[i], 3);
+           nakedVal(rows[i], 2);
+           nakedVal(columns[i], 4);
+           nakedVal(columns[i], 3);
+           nakedVal(columns[i], 2);
+           nakedVal(blocks[i], 4);
+           nakedVal(blocks[i], 3);
+           nakedVal(blocks[i], 2);
 
        }
 
