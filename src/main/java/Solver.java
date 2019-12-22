@@ -96,7 +96,8 @@ class Solver extends Sudoku {
                 sudoku = insertForcedHeroes(sudoku);
                 updateFields(sudoku);
 
-                System.out.println("----— New board —----");System.out.println(sudokuToString());
+                System.out.println("----— New board —----");
+                System.out.println(sudokuToString());
 
                 candidates = formCandidateMatrix();
 
@@ -230,8 +231,9 @@ class Solver extends Sudoku {
                     cand = decrUnit(cand, row, rows);
                     cand = decrUnit(cand, col, columns);
                     cand = decrUnit(cand, block, blocks);
-                    candidates[i][j] = new Candidate(cand);
-                    //candidates[i][j] = magicHeroes(row, rows);
+                    if (cand.isEmpty()) cand.add(-1);
+                    candidates[row][col] = new Candidate(cand);
+
                 }
             }
         }
@@ -271,7 +273,7 @@ class Solver extends Sudoku {
         Cell[][] cells1 = copyCell(cells);
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
-                if (candidates[i][j].getCountOfCandidates() > 1) {
+                if (candidates[i][j].getCountOfCandidates() > 1 || candidates[i][j].getCandidates().contains(-1)) {
                     cells1[i][j].setValue(candidates[i][j].getCandidates().get(0));
                     return cells1;
                 }
