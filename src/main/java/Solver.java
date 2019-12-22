@@ -108,117 +108,64 @@ class Solver extends Sudoku {
         return sudoku;
     }
 
-    private void openCouples(Logic logic) {
-       Cell[] cells = logic.getUnit();
-       boolean removeValFromOtherCand;
-       int value1;
-       int value2;
+
+    private void openTrip(Logic logic, int size) {
+        Cell[] cells = logic.getUnit();
+        ArrayList<Cell> cellsToCompare = new ArrayList<Cell>();
+        ArrayList<Cell> otherCells = new ArrayList<Cell>();
         for (Cell cell: cells) {
-            removeValFromOtherCand = false;
             int row = cell.getNumbRow();
             int col = cell.getNumbColumn();
-            if (candidates[row][col].getCountOfCandidates() == 2) {
-                 value1 = candidates[row][col].getCandidates().get(0);
-                 value2 = candidates[row][col].getCandidates().get(1);
-                for (Cell cell1: cells) {
-                    if (!cell1.equals(cell)) {
-                        int row1 = cell1.getNumbRow();
-                        int col1 = cell1.getNumbColumn();
-                        if (candidates[row1][col1].getCountOfCandidates() == 2 &&
-                                candidates[row1][col1].getCandidates().contains(value1) &&
-                        candidates[row1][col1].getCandidates().contains(value2)) {
-                            removeValFromOtherCand = true;
-                            break;
-                        }
-                    }
-                }
-                if (removeValFromOtherCand) {
-                    for (Cell cell1: cells) {
-                        int row1 = cell1.getNumbRow();
-                        int col1 = cell1.getNumbColumn();
+            if (candidates[row][col].getCountOfCandidates() == size) {
+                cellsToCompare.add(cell);
+            } else if (candidates[row][col].getCountOfCandidates() > size)otherCells.add(cell);
+        }
 
-                        if (candidates[row1][col1].getCountOfCandidates() > 2) {
 
-                            if (candidates[row1][col1].getCandidates().contains(value1)) {
-                            int ind1 = candidates[row1][col1].getCandidates().indexOf(value1);
-                            candidates[row1][col1].getCandidates().remove(ind1);
-                            }
-                            if (candidates[row1][col1].getCandidates().contains(value2)) {
-                                int ind2 = candidates[row1][col1].getCandidates().indexOf(value2);
-                                candidates[row1][col1].getCandidates().remove(ind2);
-                            }
-                        }
-                    }
+        for (int i = 0; i < cellsToCompare.size(); i++) {
+
+            if (cellIsCount(cellsToCompare, cellsToCompare.get(i), size)) {
+                for (int j = 0; j < otherCells.size(); j++) {
+                    longestCommonSubSequence(candidates[cellsToCompare.get(i).getNumbRow()][cellsToCompare.get(i).getNumbColumn()],
+                            candidates[otherCells.get(j).getNumbRow()][otherCells.get(j).getNumbColumn()]);
                 }
             }
         }
     }
 
-    private void openTriples(Logic logic) {
-        Cell[] cells = logic.getUnit();
-        boolean first;
-        boolean second;
-        boolean third;
-        int value1;
-        int value2;
-        int value3;
-        for (Cell cell : cells) {
-            first = false;
-            second = false;
-            third = false;
-            value1 = -1;
-            value2 = -1;
-            value3 = -1;
-            int row = cell.getNumbRow();
-            int col = cell.getNumbColumn();
+    private boolean cellIsCount(ArrayList<Cell> list, Cell cell, int size) {
+        int a = 0;
+        int row = cell.getNumbRow();
+        int col = cell.getNumbColumn();
+        for (int i = 0; i < list.size(); i++) {
+            if (candidates[list.get(i).getNumbRow()][list.get(i).getNumbColumn()].equals(candidates[row][col]))
+                a++;
+        }
+        return a >= size;
+    }
 
-            if (candidates[row][col].getCountOfCandidates() == 3) {
-                value1 = candidates[row][col].getCandidates().get(0);
-                value2 = candidates[row][col].getCandidates().get(1);
-                value3 = candidates[row][col].getCandidates().get(2);
-                first = true;
-
-                for (Cell cell1 : cells) {
-                    int row1 = cell1.getNumbRow();
-                    int col1 = cell1.getNumbColumn();
-                    if (!cell.equals(cell1) && candidates[row1][col1].getCountOfCandidates() == 3) {
-                        if (candidates[row1][col1].equals(candidates[row][col])) {
-                            second = true;
-                            for (Cell cell2 : cells) {
-                                int row2 = cell2.getNumbRow();
-                                int col2 = cell2.getNumbColumn();
-                                if (!cell.equals(cell2) && !cell1.equals(cell2) && candidates[row2][col2].getCountOfCandidates() == 3) {
-                                    if (candidates[row2][col2].equals(candidates[row1][col1])) {
-                                        third = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+    public void longestCommonSubSequence(Candidate cand1, Candidate cand2) {
+        int len1 = cand1.getCountOfCandidates();
+        int len2 = cand2.getCountOfCandidates();
+        int[][] len = new int[len1 + 1][len2 + 1];
+        for (int i = 1; i < len1 + 1; i++) {
+            for (int j = 1; j < len2 + 1; j++) {
+                if (cand1.getCandidates().get(i - 1) != cand2.getCandidates().get(j - 1)) len[i][j] = Math.max(len[i - 1][j], len[i][j - 1]);
+                else len[i][j] = len[i - 1][j - 1] + 1;
             }
+        } //O(n*m)
+        subSequence(len.length - 1, len[0].length - 1, len, cand1, cand2);
+    }
 
-            if (first && second && third) {
-                for (Cell cell3 : cells) {
-                    int row3 = cell3.getNumbRow();
-                    int col3 = cell3.getNumbColumn();
-                    if (candidates[row3][col3].getCountOfCandidates() > 3) {
-                        if (candidates[row3][col3].getCandidates().contains(value1)) {
-                            int ind1 = candidates[row3][col3].getCandidates().indexOf(value1);
-                            candidates[row3][col3].getCandidates().remove(ind1);
-                        }
-                        if (candidates[row3][col3].getCandidates().contains(value2)) {
-                            int ind2 = candidates[row3][col3].getCandidates().indexOf(value2);
-                            candidates[row3][col3].getCandidates().remove(ind2);
-                        }
-                        if (candidates[row3][col3].getCandidates().contains(value3)) {
-                            int ind3 = candidates[row3][col3].getCandidates().indexOf(value3);
-                            candidates[row3][col3].getCandidates().remove(ind3);
-                        }
-                    }
-                }
-            }
+
+    private static void subSequence(int i, int j, int[][] len, Candidate cand1, Candidate cand2) {
+        if (i == 0 || j == 0) return;
+        if (cand1.getCandidates().get(i - 1) == cand2.getCandidates().get(j - 1)) {
+            cand2.getCandidates().remove(j - 1);
+            subSequence(i - 1, j - 1, len, cand1, cand2);
+        } else {
+            if (len[i - 1][j] >= len[i][j-1]) subSequence(i - 1, j, len, cand1, cand2);
+            else subSequence(i, j - 1, len, cand1, cand2);
         }
     }
 
@@ -289,26 +236,21 @@ class Solver extends Sudoku {
             }
         }
 
-       /* for (int i = 0; i < boardSize; i++) {
-            magicHeroes(rows[i]);
-            System.out.println(candidatesToString());
-            magicHeroes(columns[i]);
-            System.out.println(candidatesToString());
-            magicHeroes(blocks[i]);
-            System.out.println(candidatesToString());
-        } */
 
        for (int i = 0; i < boardSize; i++) {
-           openCouples(rows[i]);
-           openCouples(columns[i]);
-           openCouples(blocks[i]);
+           //openCouples(rows[i]);
+           openTrip(rows[i], 4);
+           openTrip(rows[i], 3);
+           openTrip(rows[i], 2);
+           openTrip(columns[i], 4);
+           openTrip(columns[i], 3);
+           openTrip(columns[i], 2);
+           openTrip(blocks[i], 4);
+           openTrip(blocks[i], 3);
+           openTrip(blocks[i], 2);
+
        }
 
-       for (int i = 0; i < boardSize; i++) {
-          openTriples(rows[i]);
-          openTriples(columns[i]);
-          openTriples(blocks[i]);
-       }
 
         return candidates;
     }

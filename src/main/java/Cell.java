@@ -18,6 +18,8 @@ public class Cell {
 
     }
 
+    Cell(){};
+
     @Override
     public boolean equals(Object obj) {
         Cell other = (Cell) obj;
