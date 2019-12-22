@@ -18,7 +18,12 @@ public class Cell {
 
     }
 
-
+    @Override
+    public boolean equals(Object obj) {
+        Cell other = (Cell) obj;
+        return (other.getNumbColumn() == this.getNumbColumn()
+                && other.getNumbRow() == this.getNumbRow());
+    }
 
     public void setValue(int value) {
         this.value = value;

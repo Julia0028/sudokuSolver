@@ -108,7 +108,119 @@ class Solver extends Sudoku {
         return sudoku;
     }
 
+    private void openCouples(Logic logic) {
+       Cell[] cells = logic.getUnit();
+       boolean removeValFromOtherCand;
+       int value1;
+       int value2;
+        for (Cell cell: cells) {
+            removeValFromOtherCand = false;
+            int row = cell.getNumbRow();
+            int col = cell.getNumbColumn();
+            if (candidates[row][col].getCountOfCandidates() == 2) {
+                 value1 = candidates[row][col].getCandidates().get(0);
+                 value2 = candidates[row][col].getCandidates().get(1);
+                for (Cell cell1: cells) {
+                    if (!cell1.equals(cell)) {
+                        int row1 = cell1.getNumbRow();
+                        int col1 = cell1.getNumbColumn();
+                        if (candidates[row1][col1].getCountOfCandidates() == 2 &&
+                                candidates[row1][col1].getCandidates().contains(value1) &&
+                        candidates[row1][col1].getCandidates().contains(value2)) {
+                            removeValFromOtherCand = true;
+                            break;
+                        }
+                    }
+                }
+                if (removeValFromOtherCand) {
+                    for (Cell cell1: cells) {
+                        int row1 = cell1.getNumbRow();
+                        int col1 = cell1.getNumbColumn();
 
+                        if (candidates[row1][col1].getCountOfCandidates() > 2) {
+
+                            if (candidates[row1][col1].getCandidates().contains(value1)) {
+                            int ind1 = candidates[row1][col1].getCandidates().indexOf(value1);
+                            candidates[row1][col1].getCandidates().remove(ind1);
+                            }
+                            if (candidates[row1][col1].getCandidates().contains(value2)) {
+                                int ind2 = candidates[row1][col1].getCandidates().indexOf(value2);
+                                candidates[row1][col1].getCandidates().remove(ind2);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void openTriples(Logic logic) {
+        Cell[] cells = logic.getUnit();
+        boolean first;
+        boolean second;
+        boolean third;
+        int value1;
+        int value2;
+        int value3;
+        for (Cell cell : cells) {
+            first = false;
+            second = false;
+            third = false;
+            value1 = -1;
+            value2 = -1;
+            value3 = -1;
+            int row = cell.getNumbRow();
+            int col = cell.getNumbColumn();
+
+            if (candidates[row][col].getCountOfCandidates() == 3) {
+                value1 = candidates[row][col].getCandidates().get(0);
+                value2 = candidates[row][col].getCandidates().get(1);
+                value3 = candidates[row][col].getCandidates().get(2);
+                first = true;
+
+                for (Cell cell1 : cells) {
+                    int row1 = cell1.getNumbRow();
+                    int col1 = cell1.getNumbColumn();
+                    if (!cell.equals(cell1) && candidates[row1][col1].getCountOfCandidates() == 3) {
+                        if (candidates[row1][col1].equals(candidates[row][col])) {
+                            second = true;
+                            for (Cell cell2 : cells) {
+                                int row2 = cell2.getNumbRow();
+                                int col2 = cell2.getNumbColumn();
+                                if (!cell.equals(cell2) && !cell1.equals(cell2) && candidates[row2][col2].getCountOfCandidates() == 3) {
+                                    if (candidates[row2][col2].equals(candidates[row1][col1])) {
+                                        third = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (first && second && third) {
+                for (Cell cell3 : cells) {
+                    int row3 = cell3.getNumbRow();
+                    int col3 = cell3.getNumbColumn();
+                    if (candidates[row3][col3].getCountOfCandidates() > 3) {
+                        if (candidates[row3][col3].getCandidates().contains(value1)) {
+                            int ind1 = candidates[row3][col3].getCandidates().indexOf(value1);
+                            candidates[row3][col3].getCandidates().remove(ind1);
+                        }
+                        if (candidates[row3][col3].getCandidates().contains(value2)) {
+                            int ind2 = candidates[row3][col3].getCandidates().indexOf(value2);
+                            candidates[row3][col3].getCandidates().remove(ind2);
+                        }
+                        if (candidates[row3][col3].getCandidates().contains(value3)) {
+                            int ind3 = candidates[row3][col3].getCandidates().indexOf(value3);
+                            candidates[row3][col3].getCandidates().remove(ind3);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 
     private ArrayList<Integer> decrUnit(List<Integer> cand, int i, Logic[] logic) {
@@ -167,14 +279,37 @@ class Solver extends Sudoku {
                     candidates[row][col] = new Candidate(new ArrayList<Integer>());
                 else {
                     List<Integer> cand = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
+
                     cand = decrUnit(cand, row, rows);
                     cand = decrUnit(cand, col, columns);
                     cand = decrUnit(cand, block, blocks);
                     candidates[i][j] = new Candidate(cand);
-
+                    //candidates[i][j] = magicHeroes(row, rows);
                 }
             }
         }
+
+       /* for (int i = 0; i < boardSize; i++) {
+            magicHeroes(rows[i]);
+            System.out.println(candidatesToString());
+            magicHeroes(columns[i]);
+            System.out.println(candidatesToString());
+            magicHeroes(blocks[i]);
+            System.out.println(candidatesToString());
+        } */
+
+       for (int i = 0; i < boardSize; i++) {
+           openCouples(rows[i]);
+           openCouples(columns[i]);
+           openCouples(blocks[i]);
+       }
+
+       for (int i = 0; i < boardSize; i++) {
+          openTriples(rows[i]);
+          openTriples(columns[i]);
+          openTriples(blocks[i]);
+       }
+
         return candidates;
     }
 
