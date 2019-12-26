@@ -50,7 +50,7 @@ public class SudokuTest {
 
 
     @Test
-    public void unsolv() {
+    public void unsolv1() {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage("input board is incorrect");
         Sudoku sudoku = new Sudoku(boardError3).getSolution();
@@ -58,10 +58,17 @@ public class SudokuTest {
 
 
     @Test
-    public void unsolv1() {
+    public void unsolv2() {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage("cells can take values from 0 to 9");
         Sudoku sudoku1 = new Sudoku(boardError4);
+    }
+
+    @Test
+    public void unsolv3() {
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage("cells can take values from 0 to 9");
+        Sudoku sudoku1 = new Sudoku(boardError5);
     }
 
 
@@ -182,6 +189,18 @@ public class SudokuTest {
             {8, 0, 0, 0, 6, 0, 0, 0, 3},
             {4, 0, 0, 8, 16, 3, 0, 0, 1},
             {7, 0, 0, 0, 2, 0, 0, 0, 6},
+            {0, 6, 0, 0, 0, 0, 2, 8, 0},
+            {0, 0, 0, 4, 1, 9, 0, 0, 5},
+            {0, 0, 0, 0, 8, 0, 0, 7, 9}
+    };
+
+    private int[][] boardError5 = {
+            {5, 3, 0, 0, 7, 0, 0, 0, 0},
+            {6, 0, 0, 1, 9, 5, 0, 0, 0},
+            {0, 9, 8, 0, 0, 0, 0, 6, 0},
+            {8, 0, 0, 0, 6, 0, 0, 0, 3},
+            {4, 0, 0, 8, 0, 3, 0, 0, 1},
+            {7, 0, 0, 0, 2, 0, 0, -1, 6},
             {0, 6, 0, 0, 0, 0, 2, 8, 0},
             {0, 0, 0, 4, 1, 9, 0, 0, 5},
             {0, 0, 0, 0, 8, 0, 0, 7, 9}

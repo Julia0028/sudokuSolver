@@ -45,7 +45,7 @@ public class Sudoku {
     }
 
     private void valueValid(int value) {
-        if (value > 9) throw new IllegalArgumentException("cells can take values from 0 to 9");
+        if (value < 0 || value > 9) throw new IllegalArgumentException("cells can take values from 0 to 9");
     }
 
     public Sudoku(Sudoku other) {
