@@ -2,17 +2,14 @@ import java.util.ArrayList;
 
 public class Logic extends Sudoku {
 
-    Cell[] unit = new Cell[boardSize];
+    ArrayList<Cell> unit = new ArrayList<Cell>();
 
-    Cell[] getUnit() {
-        return unit;
-    }
 
 
     boolean isCorrect() {
         ArrayList<Integer> retArray = new ArrayList<Integer>();
         for (int i = 0; i < 9; i++) {
-            if (unit[i].getValue() != 0) retArray.add(unit[i].getValue());
+            if (unit.get(i).getValue() != 0) retArray.add(unit.get(i).getValue());
         }
         for (int j = 0; j < retArray.size(); j++) {
             for (int k = j + 1; k < retArray.size(); k++) {
@@ -22,5 +19,9 @@ public class Logic extends Sudoku {
             }
         }
         return true;
+    }
+
+    Cell getCell(int index) {
+        return unit.get(index);
     }
 }

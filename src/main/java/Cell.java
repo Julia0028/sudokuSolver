@@ -18,6 +18,10 @@ public class Cell {
 
     }
 
+    public void setCell(Cell cell) {
+
+    }
+
 
     @Override
     public boolean equals(Object obj) {

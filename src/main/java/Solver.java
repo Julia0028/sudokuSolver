@@ -6,10 +6,10 @@ import java.util.List;
 public class Solver extends Sudoku{
 
     private Row[] rows = new Row[boardSize];
-        private Column[] columns = new Column[boardSize];
-        private Block[] blocks = new Block[boardSize];
-        private Candidate[][] candidates = new Candidate[boardSize][boardSize];
-        private ArrayList<Fork> savepoints = new ArrayList<Fork>();
+    private Column[] columns = new Column[boardSize];
+    private Block[] blocks = new Block[boardSize];
+    private Candidate[][] candidates = new Candidate[boardSize][boardSize];
+    private ArrayList<Fork> savepoints = new ArrayList<Fork>();
 
 
         Solver(Sudoku other) {
@@ -32,7 +32,7 @@ public class Solver extends Sudoku{
 
                 if (!boardIsValid()) {
                    System.out.println("conflict sudoku \n" + sudokuToString());
-                    System.out.println("conflict matrix \n" + candidatesToString());
+                   System.out.println("conflict matrix \n" + candidatesToString());
                     sudoku = loadSavepoint();
                     updateFields(sudoku);
                     sudoku = insertForcedHeroes(sudoku);
@@ -66,7 +66,7 @@ public class Solver extends Sudoku{
 
 
     private Candidate[][] findUnitHeroes() {
-        Candidate[][] cand = copyCandidates(candidates);
+        Candidate[][] cand = copyCandMatrix(candidates);
         ArrayList<Integer> allCandidates;
         HashSet<Cell> allCells;
         ArrayList<Integer> candOfCells;
@@ -78,9 +78,13 @@ public class Solver extends Sudoku{
                 allCandidates = new ArrayList<Integer>();
                 candOfCells = new ArrayList<Integer>();
                 candOfCells.addAll(cand[i][j].getCandidates());
-                allCells.addAll(Arrays.asList(rows[i].getUnit()));
-                allCells.addAll(Arrays.asList(columns[j].getUnit()));
-                allCells.addAll(Arrays.asList(blocks[cell.getNumbBlock()].getUnit()));
+
+                for (int k = 0; k < boardSize; k++) {
+                    allCells.add(rows[i].getCell(k));
+                    allCells.add(columns[j].getCell(k));
+                    allCells.add(blocks[cell.getNumbBlock()].getCell(k));
+                }
+
                 for (Cell cell1: allCells) {
                     int row = cell1.getNumbRow();
                     int col = cell1.getNumbColumn();
@@ -100,10 +104,10 @@ public class Solver extends Sudoku{
 
 
         private void nakedVal(Logic logic, int size) {
-            Cell[] cells = logic.getUnit();
             ArrayList<Cell> cellsToCompare = new ArrayList<Cell>();
             ArrayList<Cell> otherCells = new ArrayList<Cell>();
-            for (Cell cell: cells) {
+            for (int i = 0; i < boardSize; i++) {
+                Cell cell = logic.getCell(i);
                 int row = cell.getNumbRow();
                 int col = cell.getNumbColumn();
                 if (candidates[row][col].getCountOfCandidates() == size) {
@@ -163,9 +167,8 @@ public class Solver extends Sudoku{
         private ArrayList<Integer> decrUnit(List<Integer> cand, int i, Logic[] logic) {
             ArrayList<Integer> candidates = new ArrayList<Integer>(cand);
             for (int value = 1; value < 10; value++) {
-                Cell[] mas = logic[i].getUnit();
                 for (int k = 0; k < boardSize; k++) {
-                    if (mas[k].getValue() == value) {
+                    if (logic[i].getCell(k).getValue() == value) {
                         for (int a = 0; a < candidates.size(); a++) {
                             if (candidates.get(a) == value) candidates.remove(a);
                         }
@@ -377,7 +380,7 @@ public class Solver extends Sudoku{
         }
 
 
-    private Candidate[][] copyCandidates(Candidate[][] first) {
+    private Candidate[][] copyCandMatrix(Candidate[][] first) {
         Candidate copy[][] = new Candidate[9][9];
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
@@ -387,6 +390,7 @@ public class Solver extends Sudoku{
         }
         return copy;
     }
+
 
 
         private String sudokuToString() {
