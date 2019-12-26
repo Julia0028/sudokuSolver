@@ -1,6 +1,4 @@
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 public class Logic extends Sudoku {
 
@@ -10,15 +8,19 @@ public class Logic extends Sudoku {
         return unit;
     }
 
+
     boolean isCorrect() {
-        HashSet set = new HashSet();
+        ArrayList<Integer> retArray = new ArrayList<Integer>();
         for (int i = 0; i < 9; i++) {
-            set.add(unit[i].getValue());
+            if (unit[i].getValue() != 0) retArray.add(unit[i].getValue());
         }
-        if (set.size() != 9) return false;
+        for (int j = 0; j < retArray.size(); j++) {
+            for (int k = j + 1; k < retArray.size(); k++) {
+                if (retArray.get(k).equals(retArray.get(j))) {
+                    return false;
+                }
+            }
+        }
         return true;
     }
-
-
-
 }

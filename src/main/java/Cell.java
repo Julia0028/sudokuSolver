@@ -18,7 +18,6 @@ public class Cell {
 
     }
 
-    Cell(){};
 
     @Override
     public boolean equals(Object obj) {

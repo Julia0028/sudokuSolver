@@ -15,7 +15,7 @@ public class Sudoku {
         this();
         int numbBlock = 0;
 
-        boardValidation(board);
+        sizebBoardValid(board);
 
         for (int i = 0; i < board.length; i++) {
 
@@ -36,22 +36,28 @@ public class Sudoku {
                     if (j > 2 && j < 6) numbBlock = 7;
                     else if (j > 5 ) numbBlock = 8;
                 }
+
+                valueValid(board[i][j]);
                 this.sudoku[i][j] = new Cell(i, j, numbBlock, board[i][j]);
 
             }
         }
     }
 
+    private void valueValid(int value) {
+        if (value > 9) throw new IllegalArgumentException("cells can take values from 0 to 9");
+    }
+
     public Sudoku(Sudoku other) {
         this();
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
-                this.sudoku[i][j] = other.getSudoku()[i][j];
+                this.sudoku[i][j] = new Cell(i, j, other.getCell(i, j).getNumbBlock(), other.getCell(i, j).getValue());
             }
         }
     }
 
-    private void boardValidation(int[][] board) {
+    private void sizebBoardValid(int[][] board) {
         int sumRow = 0;
         int sumColumn = 0;
         for (int i = 0; i < board.length; i++) {
@@ -69,13 +75,28 @@ public class Sudoku {
 
 
 
-    String getSolution() {
+    Sudoku getSolution() {
         Solver solver = new Solver(this);
-        return solver.solve();
+        if (!solver.boardIsValid()) throw new IllegalArgumentException("input board is incorrect");
+        solver.algoLoop();
+        return solver;
     }
 
-    Cell[][] getSudoku() {
-        return sudoku;
+    Cell getCell(int row, int col) {
+        return sudoku[row][col];
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
+                sb.append(sudoku[i][j].getValue());
+                sb.append(" ");
+                if (j == 8) sb.append("\n");
+            }
+        }
+        return sb.toString();
     }
 }
 

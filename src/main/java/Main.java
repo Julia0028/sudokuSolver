@@ -47,18 +47,32 @@ public class Main {
                 {0, 0, 8, 5, 0, 0, 0, 1, 0},
                 {0, 9, 0, 0, 0, 0, 4, 0, 0}
         };
+
+         int[][] board5 = new int[9][9];
+
+        int[][] board6 = {
+                {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 6, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0}
+        };
         long startTime = System.currentTimeMillis();
 
         {
-            Sudoku sudoku = new Sudoku(board4);
+            Sudoku sudoku = new Sudoku(board4).getSolution();
 
-            System.out.println(sudoku.getSolution());
+            System.out.println(sudoku.getSolution().toString());
 
         }
 
         //время затраченное на выполнение кода
         long time = System.currentTimeMillis() - startTime;
-       // System.out.println(time);
+        System.out.println(time);
 
     }
 

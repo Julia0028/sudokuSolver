@@ -19,13 +19,19 @@ public class SudokuTest {
     @Test
     public void solv2() {
         Sudoku sudoku = new Sudoku(board2);
-        assertEquals(sudoku.getSolution(), board2Answer);
+        assertEquals(sudoku.getSolution().toString(), board2Answer);
     }
 
     @Test
     public void unsolv() {
-        Sudoku sudoku = new Sudoku(boardError3);
-        assertEquals(sudoku.getSolution(), "failed to get sudoku solution");
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage("input board is incorrect");
+        Sudoku sudoku = new Sudoku(boardError3).getSolution();
+
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage("cells can take values from 0 to 9");
+        Sudoku sudoku1 = new Sudoku(boardError4);
+
     }
 
     @Test
@@ -96,6 +102,18 @@ public class SudokuTest {
             {0, 0, 1, 0, 0, 0, 0, 6, 8},
             {0, 0, 8, 5, 0, 0, 0, 1, 0},
             {0, 9, 0, 0, 0, 0, 4, 0, 0}
+    };
+
+    private int[][] boardError4 = {
+            {5, 3, 0, 0, 7, 0, 0, 0, 0},
+            {6, 0, 0, 1, 9, 5, 0, 0, 0},
+            {0, 9, 8, 0, 0, 0, 0, 6, 0},
+            {8, 0, 0, 0, 6, 0, 0, 0, 3},
+            {4, 0, 0, 8, 16, 3, 0, 0, 1},
+            {7, 0, 0, 0, 2, 0, 0, 0, 6},
+            {0, 6, 0, 0, 0, 0, 2, 8, 0},
+            {0, 0, 0, 4, 1, 9, 0, 0, 5},
+            {0, 0, 0, 0, 8, 0, 0, 7, 9}
     };
 
 
