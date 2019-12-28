@@ -58,17 +58,15 @@ public class Sudoku {
     }
 
     private void sizebBoardValid(int[][] board) {
-        int sumRow = 0;
-        int sumColumn = 0;
+
         for (int i = 0; i < board.length; i++) {
-            sumRow++;
             for (int j = 0; j < board[0].length; j++) {
-                sumColumn++;
-               if (j == board[0].length - 1 && sumColumn != 9) throw new
+
+                if (j == board[0].length - 1 && j != 8) throw new
                        IllegalArgumentException("A column must have 9 cells");
             }
-            sumColumn = 0;
-            if (i == board.length - 1 && sumRow != 9) throw new
+
+            if (i == board.length - 1 && i != 8) throw new
                     IllegalArgumentException("A row must have 9 cells");
         }
     }
@@ -81,6 +79,10 @@ public class Sudoku {
         solver.algoLoop();
         return solver;
     }
+
+
+
+
 
     Cell getCell(int row, int col) {
         return sudoku[row][col];

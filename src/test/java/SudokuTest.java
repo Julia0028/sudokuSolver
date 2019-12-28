@@ -13,6 +13,7 @@ public class SudokuTest {
     @Test
     public void solv1() {
         Sudoku sudoku = new Sudoku(board1);
+
         assertEquals(sudoku.getSolution().toString(), board1Answer);
 
     }
@@ -87,7 +88,7 @@ public class SudokuTest {
         Sudoku sudoku1 = new Sudoku(boardError2);
     }
 
-    private int[][] board1 = {
+     int[][] board1 = {
             {5, 3, 0, 0, 7, 0, 0, 0, 0},
             {6, 0, 0, 1, 9, 5, 0, 0, 0},
             {0, 9, 8, 0, 0, 0, 0, 6, 0},

@@ -28,38 +28,55 @@ public class Solver extends Sudoku{
 
             Cell[][] oldSudoku;
             int idx = 0;
+
             while (!isSudokuComplete()) {
 
                 if (!boardIsValid()) {
-                   System.out.println("conflict sudoku \n" + sudokuToString());
-                   System.out.println("conflict matrix \n" + candidatesToString());
+                 //  System.out.println("conflict sudoku \n" + sudokuToString());
+                   //System.out.println("conflict matrix \n" + Candidate.candMatrixToString(candidates));
                     sudoku = loadSavepoint();
                     updateFields(sudoku);
                     sudoku = insertForcedHeroes(sudoku);
                     updateFields(sudoku);
+
+                    System.out.println("---— Candidates —----");
+                    System.out.println(candidatesToString());
+
                 }
 
                 oldSudoku = copyCell(sudoku);
+
                 idx++;
                 System.out.println("------" + idx + "------");
                 System.out.println(sudokuToString());
+
                 candidates = formCandidateMatrix();
+                candidates = findOpenVal();
+
                 System.out.println("---— Candidates —----");
                 System.out.println(candidatesToString());
 
                 candidates = findUnitHeroes();
+
                 System.out.println("-----Row Col Block Heroes-----");
                 System.out.println(candidatesToString());
                 sudoku = insertHeroes(sudoku);
                 updateFields(sudoku);
+
                 System.out.println("----— New board —----");
                 System.out.println(sudokuToString());
+
+
+
                 if (equalsSudoku(oldSudoku, sudoku)) {
                     sudoku = insertForcedHeroes(sudoku);
                     updateFields(sudoku);
-                    System.out.println("----— New board —----");
-                    System.out.println(sudokuToString());
+
+                    System.out.println("---— Candidates —----");
+                    System.out.println(candidatesToString());
+
                 }
+
             }
 
         }
@@ -102,17 +119,35 @@ public class Solver extends Sudoku{
         return cand;
     }
 
+    private Candidate[][] findOpenVal() {
+        Candidate[][] cand = copyCandMatrix(candidates);
 
-        private void nakedVal(Logic logic, int size) {
+        for (int i = 0; i < boardSize; i++) {
+            openVal(rows[i], 4, cand);
+            openVal(rows[i], 3, cand);
+            openVal(rows[i], 2, cand);
+            openVal(columns[i], 4, cand);
+            openVal(columns[i], 3, cand);
+            openVal(columns[i], 2, cand);
+            openVal(blocks[i], 4, cand);
+            openVal(blocks[i], 3, cand);
+            openVal(blocks[i], 2, cand);
+
+        }
+        return cand;
+    }
+
+
+        private void openVal(Logic logic, int size, Candidate[][] cand) {
             ArrayList<Cell> cellsToCompare = new ArrayList<Cell>();
             ArrayList<Cell> otherCells = new ArrayList<Cell>();
             for (int i = 0; i < boardSize; i++) {
                 Cell cell = logic.getCell(i);
                 int row = cell.getNumbRow();
                 int col = cell.getNumbColumn();
-                if (candidates[row][col].getCountOfCandidates() == size) {
+                if (cand[row][col].getCountOfCandidates() == size) {
                     cellsToCompare.add(cell);
-                } else if (candidates[row][col].getCountOfCandidates() > size)otherCells.add(cell);
+                } else if (cand[row][col].getCountOfCandidates() > size)otherCells.add(cell);
             }
 
 
@@ -120,8 +155,8 @@ public class Solver extends Sudoku{
 
                 if (cellIsCount(cellsToCompare, cellsToCompare.get(i), size)) {
                     for (int j = 0; j < otherCells.size(); j++) {
-                        longestCommonSubSequence(candidates[cellsToCompare.get(i).getNumbRow()][cellsToCompare.get(i).getNumbColumn()],
-                                candidates[otherCells.get(j).getNumbRow()][otherCells.get(j).getNumbColumn()]);
+                        longestCommonSubSequence(cand[cellsToCompare.get(i).getNumbRow()][cellsToCompare.get(i).getNumbColumn()],
+                                cand[otherCells.get(j).getNumbRow()][otherCells.get(j).getNumbColumn()]);
                     }
                 }
             }
@@ -199,19 +234,6 @@ public class Solver extends Sudoku{
                 }
             }
 
-
-            for (int i = 0; i < boardSize; i++) {
-                nakedVal(rows[i], 4);
-                nakedVal(rows[i], 3);
-                nakedVal(rows[i], 2);
-                nakedVal(columns[i], 4);
-                nakedVal(columns[i], 3);
-                nakedVal(columns[i], 2);
-                nakedVal(blocks[i], 4);
-                nakedVal(blocks[i], 3);
-                nakedVal(blocks[i], 2);
-
-            }
             return candidates;
         }
 
@@ -380,7 +402,7 @@ public class Solver extends Sudoku{
         }
 
 
-    private Candidate[][] copyCandMatrix(Candidate[][] first) {
+     Candidate[][] copyCandMatrix(Candidate[][] first) {
         Candidate copy[][] = new Candidate[9][9];
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
@@ -404,16 +426,16 @@ public class Solver extends Sudoku{
             return s;
         }
 
-        private String candidatesToString() {
-            String s = "";
-            for (int i = 0; i < boardSize; i++) {
-                for (int j = 0; j < boardSize; j++) {
-                    s = s + candidates[i][j].getCandidates() + "   ";
-                    if (j == 8) s += "\n\n";
+    private String candidatesToString() {
+        String s = "";
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
+                s = s + candidates[i][j].getCandidates() + "   ";
+                if (j == 8) s += "\n\n";
 
-                }
             }
-            return s;
         }
+        return s;
     }
+}
 
